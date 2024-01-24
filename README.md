@@ -1,73 +1,46 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
-</p>
-
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
-
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
-
-## Description
-
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+  
 
 ## Installation
 
+  
+
 ```bash
+
 $ pnpm install
+
 ```
 
-## Running the app
+  
+
+## Running the project
+
 
 ```bash
-# development
-$ pnpm run start
 
-# watch mode
-$ pnpm run start:dev
+$ pnpm install
 
-# production mode
-$ pnpm run start:prod
 ```
 
-## Test
+#### Solution
 
-```bash
-# unit tests
-$ pnpm run test
+Since limitation on transaction API is 5 requests per min on transaction API WE can make 7200 requests per day, and with limit of 1000, on average it will be 7,200,000 records per day.
 
-# e2e tests
-$ pnpm run test:e2e
+- Make a table for translations
 
-# test coverage
-$ pnpm run test:cov
-```
+- Implementing a Cron job to run every 5 mins and and get data from transposition Api startDate: now - endDate 5 mins earlear - 10 second, with each running this process will be repeated and fetch my data.(Ofc some pagination is needed if total page was more than)
 
-## Support
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+- Writing data to database including adding creating, updating, deleting to have updated transactions info all the time
 
-## Stay in touch
+- On each request from our users we will fetch data from data base and save it to Redis
 
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+like this ``redis.set(`transaction:${transaction.id}`, JSON.stringify(aggregationData), 'EX', 120)`` with expiring time of 60 second
 
-## License
 
-Nest is [MIT licensed](LICENSE).
+#### Testing Strategy
+
+- Create a test database with test environment
+- Create mock data for external API
+- I will start with writing test for easier and smaller services. including writing and reading from database
+- Writing test for cron job
+- Writing tests for controller including input validation, response and payload
